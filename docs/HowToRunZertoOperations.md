@@ -1,12 +1,13 @@
 # How To Run Zerto Operations
 
-After deploying Zerto for Kubernetes, create a VPG, tag checkpoints then test failover:
+After deploying Zerto for Kubernetes, create a VPG, configure one-to-many (optional), tag checkpoints, and then test failover:
 
 1.	[Create a VPG](#creating-a-vpg)
-2.	[Tag a Checkpoint](#tagging-a-checkpoint)
-3.	[Test Failover](#testing-failover)
+2.	[Configure One-to-Many](#configuring-one-to-many)
+3.	[Tag a Checkpoint](#tagging-a-checkpoint)
+4.	[Test Failover](#testing-failover)
 
-Then, when you need to, perform one of the following:
+Then, you can perform one of the following:
 
 -	[Perform a Failover](#performing-a-failover)
 -	[Restore a Single VPG](#restoring-a-single-vpg)
@@ -25,7 +26,7 @@ Then, when you need to, perform one of the following:
 ## Creating a VPG
 
 
--	Create a .yaml file to represent a VPG.
+1. Create a .yaml file to represent a VPG.
 
 
 > In the following example the VPG webApp1:
@@ -61,7 +62,7 @@ spec:
 ```
 
 
--	Annotate Kubernetes entities to include them in the VPG.
+2.	Annotate Kubernetes entities to include them in the VPG.
 
 >>-	A VPG can contain a selection of entities like stateful sets, deployments, services, secrets and configmaps.
 
@@ -69,7 +70,7 @@ spec:
 
 -	To include an entity in a VPG, you must annotate the entity with the VPG name.
 
-Use the following example of deployment protection for guidlines.
+Use the following example of deployment protection for guidelines.
 
 
 ```
@@ -103,8 +104,30 @@ spec:
 	    claimName: my-vol1-debian-5to6
 ```
 
+## Configuring One-to-Many
 
--	Create the VPG by running the command:
+Z4K can protect the same entity multiple times. 
+
+This feature serves two main goals:
+1.	Enables high availability (HA) for protected VPGs.
+2.	Enables Continuous Data Protection (CDP) during migration with a local and a remote copy.
+
+To protect the same entity multiple times:
+
+- Add all of the VPG names in the annotation field with a ';' delimiter sign:
+
+```
+kind: Deployment
+metadata:
+  name: debian
+  labels:
+    app: debian
+  annotations:
+    vpg: webApp1Self; webApp1Site2; webApp1Site3 /<VPG names as configured in VPG yaml files>
+    * * *
+```   
+
+- Create the VPG by running the command:
 
 
 ```
@@ -298,7 +321,7 @@ spec:
 Example vpg.yaml File - Backing Up to Azure Blob Storage
 
 
--	The Azure application id and client secret should be captured as a Kubernetes secret, whose name appears in the vpg.yaml file. In the example above, this is mysecret. In the example above, this is mysecret.
+-	The Azure application id and client secret should be captured as a Kubernetes secret, whose name appears in the vpg.yaml file. In the example above, this is mysecret. 
 -	The secret must contain a data item for the ApplicationId and a data item for the ClientSecret, and can be created in any site to which Zerto Kubernetes Manager has access. In the example above, this is site1.
 
 
@@ -439,7 +462,7 @@ kubectl exec
 
 There are 2 options to configure Ingress Controller Resources with a deployment for protection:
 	
--	Configure protection when created a new deployment, as illustrated in the YAML example below:
+-	Configure protection when creating a new deployment, as illustrated in the YAML example below:
 
 ```
 apiVersion: networking.k8s.io/v1
