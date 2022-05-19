@@ -22,11 +22,15 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
       
+      - name: getting owner-repo name
+        shell: bash
+        run: echo "##[set-output name=owner-repo;]$(echo ${GITHUB_REPOSITORY})"
+        id: owner-repo_name
       - name: get all tags
         uses: octokit/request-action@v2.x
         id: get_all_tags
         with:
-          route: GET '/repos/${GITHUB_REPOSITORY}/git/matching-refs/tags'
+          route: GET /repos/${{ steps.owner-repo_name.outputs.owner-repo }}/git/matching-refs/tags
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: generate tags file
