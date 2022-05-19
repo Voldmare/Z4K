@@ -22,11 +22,21 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
       
+      - name: get all tags
+        uses: octokit/request-action@v2.x
+        id: get_all_tags
+        with:
+          route: GET /repos/${GITHUB_REPOSITORY}/git/matching-refs/tags
+          owner: ${GITHUB_REPOSITORY_OWNER}
+          repo: ${{ github.event.repository.name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: "echo latest release: ${{ steps.get_all_tags.outputs.data }}"
       - name: generate tags file
         uses: "finnp/create-file-action@master"
         env:
           FILE_NAME: "tags.txt"
-          FILE_DATA: "file content"
+          FILE_DATA: "DATA - ${{ steps.get_all_tags.outputs.data }}"
       - name: getting branch name
         shell: bash
         run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
