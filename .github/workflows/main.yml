@@ -26,7 +26,7 @@ jobs:
         uses: octokit/request-action@v2.x
         id: get_all_tags
         with:
-          route: GET /repos/Voldmare/Z4K/git/matching-refs/tags
+          route: GET /repos/${GITHUB_REPOSITORY}/git/matching-refs/tags
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: generate tags file
