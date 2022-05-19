@@ -29,7 +29,6 @@ jobs:
           route: GET /repos/Voldmare/Z4K/git/matching-refs/tags
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: "echo latest release: ${{ steps.get_all_tags.outputs.data }}"
       - name: generate tags file
         uses: "finnp/create-file-action@master"
         env:
