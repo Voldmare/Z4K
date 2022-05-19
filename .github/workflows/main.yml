@@ -21,7 +21,12 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-
+      
+      - name: generate tags file
+        uses: "finnp/create-file-action@master"
+        env:
+          FILE_NAME: "tags.txt"
+          FILE_DATA: "file content"
       - name: getting branch name
         shell: bash
         run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
