@@ -32,8 +32,8 @@ jobs:
       - name: generate tags file
         uses: "finnp/create-file-action@master"
         env:
-          FILE_NAME: "tags.txt"
-          FILE_DATA: "DATA - ${{ steps.get_all_tags.outputs.data }}"
+          FILE_NAME: "tags.json"
+          FILE_DATA: "${{ steps.get_all_tags.outputs.data }}"
       - name: getting branch name
         shell: bash
         run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
